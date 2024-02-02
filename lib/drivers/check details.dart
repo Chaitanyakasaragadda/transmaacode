@@ -16,13 +16,11 @@ class _checkdetailsState extends State<checkdetails> {
   @override
   void initState() {
     super.initState();
-    // Fetch data from Firestore when the widget is created
     fetchDataFromFirestore();
   }
 
   Future<void> fetchDataFromFirestore() async {
     try {
-      // Use the document ID passed from the previous page
       DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
           .collection('userProfile')
           .doc(widget.documentId)

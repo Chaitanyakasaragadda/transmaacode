@@ -46,20 +46,13 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                   Expanded(child: buildSegment(height: 9, width: 60)),
                 ],
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 20),
               Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(vertical: 15),
                 width: 350,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      spreadRadius: 2,
-                    ),
-                  ],
                 ),
                 child: Center(
                   child: Column(
@@ -69,9 +62,9 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                         alignment: Alignment.topLeft,
                         child: Text('Experience and Data',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
                       ),
-
+                      SizedBox(height: 10,),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                         child: TextField(
                           controller: _experienceController,
                           decoration: InputDecoration(
@@ -82,7 +75,7 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                         child: TextField(
                           controller: _vehicleModelController,
                           decoration: InputDecoration(
@@ -93,7 +86,7 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                         child: TextField(
                           controller: _vehicleNumberController,
                           decoration: InputDecoration(
@@ -104,10 +97,9 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(12),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                         child: TextField(
                           controller: _dlNumberController,
-                          obscureText: passToggle ? true : false,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             label: Text("DL Number"),
@@ -116,7 +108,7 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                         child: TextField(
                           controller: _panCardNumberController,
                           decoration: InputDecoration(
@@ -126,9 +118,6 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 15),
-                      SizedBox(height: 15),
-
                     ],
                   ),
                 ),

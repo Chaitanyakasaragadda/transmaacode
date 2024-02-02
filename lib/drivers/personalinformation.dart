@@ -11,8 +11,6 @@ class PersonalScreen extends StatefulWidget {
 class _PersonalScreenState extends State<PersonalScreen> {
   String? _selectedGender;
 
-  bool passToggle = true;
-
   String _nameError = '';
   String _dateofbirthError = '';
   String _bioError = '';
@@ -30,7 +28,6 @@ class _PersonalScreenState extends State<PersonalScreen> {
         child: SafeArea(
           child: Column(
             children: [
-
               SizedBox(height: 30),
               Row(
                 children: [
@@ -50,13 +47,6 @@ class _PersonalScreenState extends State<PersonalScreen> {
                 width: 350,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      spreadRadius: 2,
-                    ),
-                  ],
                 ),
                 child: Center(
                   child: Column(
@@ -68,6 +58,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
+                      SizedBox(height: 20,),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 15),
                         child: TextField(
@@ -79,17 +70,38 @@ class _PersonalScreenState extends State<PersonalScreen> {
                           ),
                         ),
                       ),
+                      SizedBox(height: 10,),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 15),
-                        child: TextField(
+                        child: TextFormField(
                           controller: _dateofbirthController,
                           decoration: InputDecoration(
                             labelText: "Date Of Birth",
                             border: OutlineInputBorder(),
                             errorText: _dateofbirthError,
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                final DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                );
+                                if (pickedDate != null) {
+                                  setState(() {
+                                    // Format the picked date
+                                    String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                    _dateofbirthController.text = formattedDate;
+                                  });
+                                }
+                              },
+                              icon: Icon(Icons.calendar_today),
+                            ),
                           ),
+                          readOnly: true,
                         ),
                       ),
+                      SizedBox(height: 10,),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                         child: DropdownButtonFormField<String>(
@@ -108,6 +120,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                           },
                         ),
                       ),
+                      SizedBox(height: 10,),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                         child: TextField(
@@ -117,12 +130,10 @@ class _PersonalScreenState extends State<PersonalScreen> {
                             border: OutlineInputBorder(),
                             errorText: _bioError,
                           ),
-
                           maxLines: 3,
                         ),
                       ),
                       SizedBox(height: 8),
-
                     ],
                   ),
                 ),
@@ -137,14 +148,15 @@ class _PersonalScreenState extends State<PersonalScreen> {
                         _dateofbirthController.text.isNotEmpty &&
                         _selectedGender != null &&
                         _bioController.text.isNotEmpty) {
-                      // Save data to Firestore
                       try {
+                        // Save data to Firestore
                         await _firestore.collection('drivers').doc(FirebaseAuth.instance.currentUser!.uid).set({
                           'name': _nameController.text,
-                          'dateOfBirth': _dateofbirthController.text,
+                          'dateOfBirth': _dateofbirthController.text, // Save date as string
                           'gender': _selectedGender!,
                           'bio': _bioController.text,
                         });
+
                         // Navigate to the next screen if data is saved successfully
                         Navigator.push(
                           context,

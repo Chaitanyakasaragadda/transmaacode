@@ -27,8 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
     //checkUserPhoneNumber();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
