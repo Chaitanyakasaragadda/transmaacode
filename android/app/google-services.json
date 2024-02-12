@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "317818174779",
-    "project_id": "transmaa-9fa8e",
-    "storage_bucket": "transmaa-9fa8e.appspot.com"
+    "project_number": "211937448030",
+    "project_id": "transmaa-driver",
+    "storage_bucket": "transmaa-driver.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:317818174779:android:415bf84657b51323660b1e",
+        "mobilesdk_app_id": "1:211937448030:android:3e7602415190829caaa4cf",
         "android_client_info": {
           "package_name": "com.example.transmaacode"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCjK6C4Celx1bB8Ty6vemK-7d7TUlnfgyo"
+          "current_key": "AIzaSyC0ppiULMPyCH2cvl2g7TXzc9jngjt92VA"
         }
       ],
       "services": {

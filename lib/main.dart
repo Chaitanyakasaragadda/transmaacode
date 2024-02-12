@@ -1,11 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:transmaacode/drivers/personalinformation.dart';
-
-import 'drivers/driver_login.dart';
+import 'package:transmaacode/drivers/driver_login.dart';
 import 'firebase_options.dart';
-
 
 
 void main() async{
@@ -21,9 +18,10 @@ void main() async{
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return  MaterialApp(
+      title: "Driver",
       debugShowCheckedModeBanner: false,
-      home: PersonalScreen(),
+      home:LoginScreen(phoneNumber: '',),
     );
   }
 }

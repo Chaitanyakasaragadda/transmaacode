@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-import 'package:transmaacode/drivers/image%20pick.dart';
+import 'package:transmaacode/drivers/personalinformation.dart';
 
 class Register extends StatefulWidget {
-  const Register({Key? key}) : super(key: key);
+
+  final String phoneNumber;
+  const Register({Key? key,  required this.phoneNumber}) : super(key: key);
   static String verify = "";
 
   @override
@@ -18,15 +20,35 @@ class _RegisterState extends State<Register> {
   final TextEditingController countryCode = TextEditingController();
   var phone = "";
   bool _isLoading = false;
+  int selectedSegment = 0;
+  String errorMessage = ''; // Variable to track the selected segment
+  bool isVerificationCompleted = false;
+
 
   @override
   void initState() {
     countryCode.text = '+91';
     super.initState();
   }
+  static Future<void> updatePhoneNumber(String phoneNumber) async {
+    // Remove this function entirely or leave it empty
+  }
 
   @override
   Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 60,
+      textStyle: const TextStyle(
+        fontSize: 22,
+        color: Colors.black,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.red[100],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.transparent),
+      ),
+    );
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(250),
@@ -36,7 +58,7 @@ class _RegisterState extends State<Register> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/1.png',
+                'asset/Finallogo.png',
                 width: 200,
                 height: 100,
               ),
@@ -63,13 +85,65 @@ class _RegisterState extends State<Register> {
           children: [
             Row(
               children: [
-                Expanded(child: buildSegment(height: 9, width: 60, color: Colors.orange)),
-                SizedBox(width: 8),
-                Expanded(child: buildSegment(height: 9, width: 60)),
-                SizedBox(width: 8),
-                Expanded(child: buildSegment(height: 9, width: 60)),
-                SizedBox(width: 8),
-                Expanded(child: buildSegment(height: 9, width: 60)),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedSegment = 0;
+                      });
+                    },
+                    child: buildSegment(
+                        height: 9,
+                        color: selectedSegment == 0
+                            ? Colors.orange
+                            : Colors.grey),
+                  ),
+                ),
+                SizedBox(width: 8), // Add a gap
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedSegment = 1;
+                      });
+                    },
+                    child: buildSegment(
+                        height: 9,
+                        color: selectedSegment == 1
+                            ? Colors.orange
+                            : Colors.grey),
+                  ),
+                ),
+                SizedBox(width: 8), // Add a gap
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedSegment = 2;
+                      });
+                    },
+                    child: buildSegment(
+                        height: 9,
+                        color: selectedSegment == 2
+                            ? Colors.orange
+                            : Colors.grey),
+                  ),
+                ),
+                SizedBox(width: 8), // Add a gap
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedSegment = 3;
+                      });
+                    },
+                    child: buildSegment(
+                        height: 9,
+                        color: selectedSegment == 3
+                            ? Colors.orange
+                            : Colors.grey),
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 20),
@@ -78,13 +152,12 @@ class _RegisterState extends State<Register> {
               children: [
                 Text(
                   'Registration',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             SizedBox(height: 15),
-            // ... (previous code)
-
             Row(
               children: [
                 Expanded(
@@ -115,7 +188,8 @@ class _RegisterState extends State<Register> {
                         ),
                         Text(
                           '|',
-                          style: TextStyle(fontSize: 30, color: Colors.black),
+                          style: TextStyle(
+                              fontSize: 30, color: Colors.black),
                         ),
                         Expanded(
                           child: TextField(
@@ -140,23 +214,36 @@ class _RegisterState extends State<Register> {
                             primary: Colors.orange,
                           ),
                           onPressed: () async {
-                            // Trigger OTP sending process
-                            await APIs.auth.verifyPhoneNumber(
-                              phoneNumber: '${countryCode.text + phone}',
-                              verificationCompleted: (PhoneAuthCredential credential) async {},
-                              verificationFailed: (FirebaseAuthException e) {},
-                              codeSent: (String verificationId, int? resendToken) {
-                                Register.verify = verificationId;
-                                // Optionally, you can display a message to indicate that OTP has been sent.
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('OTP has been sent to ${countryCode.text + phone}'),
-                                  ),
-                                );
-                              },
-                              codeAutoRetrievalTimeout: (String verificationId) {},
-                              timeout: Duration(seconds: 60),
-                            );
+                            // Trigger OTP sending process only if OTP hasn't been sent before
+                            if (Register.verify.isEmpty &&
+                                !isVerificationCompleted) {
+                              await APIs.auth.verifyPhoneNumber(
+                                phoneNumber: '${countryCode.text + phone}',
+                                verificationCompleted:
+                                    (PhoneAuthCredential credential) async {
+                                  setState(() {
+                                    isVerificationCompleted = true;
+                                  });
+                                },
+                                verificationFailed:
+                                    (FirebaseAuthException e) {},
+                                codeSent: (String verificationId,
+                                    int? resendToken) {
+                                  Register.verify = verificationId;
+                                  // Optionally, you can display a message to indicate that OTP has been sent.
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'OTP has been sent to ${countryCode.text + phone}'),
+                                    ),
+                                  );
+                                },
+                                codeAutoRetrievalTimeout:
+                                    (String verificationId) {},
+                                timeout: Duration(seconds: 60),
+                              );
+                            }
                           },
                           child: Text(
                             'Get OTP',
@@ -172,25 +259,32 @@ class _RegisterState extends State<Register> {
                 ),
               ],
             ),
-
             SizedBox(height: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'OTP',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Pinput(
               length: 6,
-              showCursor: true,
+              defaultPinTheme: defaultPinTheme,
               controller: _otpController,
               onChanged: (value) {
                 // Additional handling if needed
               },
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: Text(
+                errorMessage, // Display the error message here
+                style: TextStyle(color: Colors.red),
+              ),
             ),
             Spacer(),
             ElevatedButton(
@@ -200,19 +294,19 @@ class _RegisterState extends State<Register> {
                 shadowColor: Colors.grey,
               ),
               onPressed: () async {
-                _verifyOTP(_otpController.text);
-
-                await APIs.auth.verifyPhoneNumber(
-                  phoneNumber: '${countryCode.text + phone}',
-                  verificationCompleted: (PhoneAuthCredential credential) async {},
-                  verificationFailed: (FirebaseAuthException e) {},
-                  codeSent: (String verificationId, int? resendToken) {
-                    Register.verify = verificationId;
-
-                  },
-                  codeAutoRetrievalTimeout: (String verificationId) {},
-                  timeout: Duration(seconds: 60),
-                );
+                // Check if verification has been completed before allowing navigation
+                if (isVerificationCompleted) {
+                  // Navigate to the new screen and pass the entered phone number
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PersonalScreen(phoneNumber: countryCode.text + phone),
+                    ),
+                  );
+                } else {
+                  // Verify OTP
+                  _verifyOTP(_otpController.text);
+                }
               },
               child: Text(
                 "Continue",
@@ -222,18 +316,21 @@ class _RegisterState extends State<Register> {
                 ),
               ),
             ),
+
+
           ],
         ),
       ),
     );
   }
-  Widget buildSegment({double height = 6, double width = 80, Color color = Colors.grey}) {
+
+  Widget buildSegment({double height = 6, Color color = Colors.grey}) {
     return Container(
       height: height,
-      width: width,
       color: color,
     );
   }
+
   void _verifyOTP(String enteredOTP) async {
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
@@ -241,19 +338,37 @@ class _RegisterState extends State<Register> {
         smsCode: enteredOTP,
       );
 
+      // Sign in with the provided credential
       await APIs.auth.signInWithCredential(credential);
 
+      // Store the phone number in Firestore
+      String phoneNumber = countryCode.text + phone;
+      await APIs.updatePhoneNumber(phoneNumber);
+
+      // Navigate to the new screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => imagepick(),
+          builder: (_) => PersonalScreen(phoneNumber: countryCode.text + phone,),
         ),
       );
     } catch (e) {
       print("Error verifying OTP: $e");
-
       // Handle OTP verification failure
-      // You can display an error message or take other actions
+
+      setState(() {
+        if (e is FirebaseAuthException) {
+          const errorMessages = {
+            'invalid-verification-code': 'Incorrect OTP. Please try again.',
+            'invalid-verification-id':
+            'Invalid verification ID. Please restart the process.',
+          };
+          errorMessage = errorMessages[e.code] ??
+              'An unexpected error occurred. Please try again.';
+        } else {
+          errorMessage = 'An unexpected error occurred. Please try again.';
+        }
+      });
     }
   }
 }
@@ -261,16 +376,14 @@ class _RegisterState extends State<Register> {
 class APIs {
   static FirebaseAuth auth = FirebaseAuth.instance;
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   static User get user => auth.currentUser!;
 
-  static Future<bool> userExists() async {
-    return (await firestore.collection('users').doc(user.uid).get()).exists;
+  static Future<void> updatePhoneNumber(String phoneNumber) async {
+    try {
+      // Your update phone number logic here
+    } catch (e) {
+      print("Error updating phone number: $e");
+      // Handle error updating phone number
+    }
   }
-
-  static Future<void> createUser() async {
-    // Handle user creation logic
-  }
-
-
 }

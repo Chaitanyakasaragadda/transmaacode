@@ -1,44 +1,78 @@
-import 'package:flutter/material.dart';
+
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:transmaacode/drivers/driver_pending_verication.dart';
 
-class checkdetails extends StatefulWidget {
-  final String documentId;
+class CheckDetails extends StatefulWidget {
+  final String dateOfBirth;
+  final String gender;
+  final String bio;
+  final String experience;
+  final String vehicleModel;
+  final String vehicleNumber;
+  final String dlNumber;
+  final String panCardNumber;
+  final String name;
+  final String phoneNumber;
+  final Uint8List? image;
 
-  checkdetails({required this.documentId});
+  CheckDetails({
+    required this.name,
+    required this.dateOfBirth,
+    required this.gender,
+    required this.bio,
+    required this.experience,
+    required this.vehicleModel,
+    required this.vehicleNumber,
+    required this.dlNumber,
+    required this.panCardNumber,
+    required this.phoneNumber,
+    required this.image, // Updated to accept Uint8List
+  });
 
   @override
-  _checkdetailsState createState() => _checkdetailsState();
+  _CheckDetailsState createState() => _CheckDetailsState();
 }
 
-class _checkdetailsState extends State<checkdetails> {
-  String imageUrl = '';
+class _CheckDetailsState extends State<CheckDetails> {
+  late TextEditingController nameController;
+  late TextEditingController dobController;
+  late TextEditingController genderController;
+  late TextEditingController bioController;
+  late TextEditingController experienceController;
+  late TextEditingController vehicleModelController;
+  late TextEditingController vehicleNumberController;
+  late TextEditingController dlNumberController;
+  late TextEditingController panCardNumberController;
+  late TextEditingController phoneController;
+
+  String? _imageUrl; // URL of the uploaded image
 
   @override
   void initState() {
     super.initState();
-    fetchDataFromFirestore();
-  }
-
-  Future<void> fetchDataFromFirestore() async {
-    try {
-      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-          .collection('userProfile')
-          .doc(widget.documentId)
-          .get();
-
-      // Get the image link from the fetched data
-      setState(() {
-        imageUrl = documentSnapshot['imageLink'];
-      });
-    } catch (error) {
-      print('Error fetching data from Firestore: $error');
-    }
+    nameController = TextEditingController(text: widget.name);
+    phoneController = TextEditingController(text: widget.phoneNumber);
+    dobController = TextEditingController(text: widget.dateOfBirth);
+    genderController = TextEditingController(text: widget.gender);
+    bioController = TextEditingController(text: widget.bio);
+    experienceController = TextEditingController(text: widget.experience);
+    vehicleModelController = TextEditingController(text: widget.vehicleModel);
+    vehicleNumberController =
+        TextEditingController(text: widget.vehicleNumber);
+    dlNumberController = TextEditingController(text: widget.dlNumber);
+    panCardNumberController =
+        TextEditingController(text: widget.panCardNumber);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('Check Details'),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -49,48 +83,44 @@ class _checkdetailsState extends State<checkdetails> {
                 'Profile',
                 style: TextStyle(fontSize: 20),
               ),
-              SizedBox(height: 10), // Add space between text and image
+              SizedBox(height: 10),
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 170,
-                      height: 170,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(12.0),
-                        image: imageUrl.isNotEmpty
-                            ? DecorationImage(
-                          image: NetworkImage(imageUrl),
-                          fit: BoxFit.cover,
-                        )
-                            : DecorationImage(
-                          image:
-                          AssetImage('assets/placeholder_image.png'),
-                          fit: BoxFit.cover,
-                        ),
+                    SizedBox(height: 20),
+                    // Display the image if available
+                    if (widget.image != null)
+                      Column(
+                        children: [
+                          Image.memory(
+                            widget.image!,
+                            width: 150,
+                            height: 150,
+                          ),
+                          SizedBox(height: 10),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: 60),
-                    // Add space between image and text fields
-                    // Text field for phone number
-                    buildTextField('Phone Number'),
                     SizedBox(height: 7),
-                    // Text field for mail id
-                    buildTextField('DL number'),
-                    SizedBox(height: 7),
-                    // Text field for date of birth
-                    buildTextField('Date of Birth'),
-                    SizedBox(height: 7),
-                    // Text field for gender
-                    buildTextField('Gender'),
-                    SizedBox(height: 125),
-                    // Add space between gender and ElevatedButton
-                    // Elevated button
+                    // Display UI for each field
+                    buildTextField('Name', nameController),
+                    buildTextField('Phone number', phoneController),
+                    buildTextField('Gender', genderController),
+                    buildTextField('Date of Birth', dobController),
+                    buildTextField('DL Number', dlNumberController),
+                    buildTextField('Bio', bioController),
+                    buildTextField('PAN Number', panCardNumberController),
+                    buildTextField('Vehicle Number', vehicleNumberController),
+                    buildTextField('Vehicle Model', vehicleModelController),
+                    buildTextField('Experience', experienceController),
+                    SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        // Add functionality for the button here
+                        uploadImageAndSaveData();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>verify()),
+                        );
                       },
                       child: Text(
                         'Start Your Journey',
@@ -114,47 +144,88 @@ class _checkdetailsState extends State<checkdetails> {
     );
   }
 
-  Widget buildTextField(String label) {
+  Widget buildTextField(String label, TextEditingController controller) {
     return Container(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: Colors.black, // Set text color to black
-              ),
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+              fontSize: 16,
             ),
-            SizedBox(height: 8.0),
-            Container(
-              height: 40,
-              // Adjusted height of the text field
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
-              // Set padding to decrease width
               child: TextField(
+                controller: controller,
+                enabled: false,
                 decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white, // Set background color
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
-                    // Set focused border color to red
-                    borderRadius: BorderRadius.circular(
-                        5.0), // Optional: Set border radius
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
-                    // Set enabled border color to red
-                    borderRadius: BorderRadius.circular(
-                        5.0), // Optional: Set border radius
-                  ),
+                  border: InputBorder.none,
+                  hintText: 'Enter $label',
+                  hintStyle: TextStyle(color: Colors.grey),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+  }
+
+  void uploadImageAndSaveData() async {
+    if (widget.image != null) {
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference ref = storage.ref().child('images/${DateTime.now()}.jpg');
+      UploadTask uploadTask = ref.putData(widget.image!);
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+      String imageUrl = await ref.getDownloadURL();
+
+      setState(() {
+        _imageUrl = imageUrl;
+      });
+    }
+
+    saveDataToFirestore();
+  }
+
+  void saveDataToFirestore() {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    DocumentReference documentReference = firestore.collection('Driver').doc();
+
+    documentReference.set({
+      'name': widget.name,
+      'dateOfBirth': widget.dateOfBirth,
+      'gender': widget.gender,
+      'bio': widget.bio,
+      'experience': widget.experience,
+      'vehicleModel': widget.vehicleModel,
+      'vehicleNumber': widget.vehicleNumber,
+      'dlNumber': widget.dlNumber,
+      'panCardNumber': widget.panCardNumber,
+      'image': _imageUrl, // Use the uploaded image URL
+      'phone_number': widget.phoneNumber,
+    }).then((value) {
+      print('Data saved successfully!');
+    }).catchError((error) {
+      print('Error: $error');
+    });
   }
 }

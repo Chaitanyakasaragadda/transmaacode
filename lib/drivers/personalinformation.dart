@@ -1,9 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:transmaacode/drivers/experienceanddata.dart';
+import 'package:intl/intl.dart';
+
+import 'experienceanddata.dart';
 
 class PersonalScreen extends StatefulWidget {
+  final String phoneNumber;
+  PersonalScreen({Key? key, required this.phoneNumber}) : super(key: key);
   @override
   State<PersonalScreen> createState() => _PersonalScreenState();
 }
@@ -11,15 +13,33 @@ class PersonalScreen extends StatefulWidget {
 class _PersonalScreenState extends State<PersonalScreen> {
   String? _selectedGender;
 
+  bool passToggle = true;
+
   String _nameError = '';
   String _dateofbirthError = '';
   String _bioError = '';
+  String _genderError='';
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateofbirthController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      // Format the picked date to remove the timestamp
+      String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
+      setState(() {
+        _dateofbirthController.text = formattedDate;
+        _dateofbirthError = ''; // Clear the error message when the user selects a date
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +55,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                   SizedBox(width: 8),
                   Expanded(child: buildSegment(height: 9, width: 60, color: Colors.orange)),
                   SizedBox(width: 8),
-                  Expanded(child: buildSegment(height: 9, width: 60)),
+                  Expanded(child: buildSegment(height: 9, width: 60, color: Colors.orange)),
                   SizedBox(width: 8),
                   Expanded(child: buildSegment(height: 9, width: 60)),
                 ],
@@ -44,7 +64,6 @@ class _PersonalScreenState extends State<PersonalScreen> {
               Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(vertical: 8),
-                width: 350,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -58,11 +77,15 @@ class _PersonalScreenState extends State<PersonalScreen> {
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      SizedBox(height: 20,),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 15),
                         child: TextField(
                           controller: _nameController,
+                          onChanged: (value) {
+                            setState(() {
+                              _nameError = ''; // Clear the error message when the user starts typing
+                            });
+                          },
                           decoration: InputDecoration(
                             labelText: "Name",
                             border: OutlineInputBorder(),
@@ -70,38 +93,25 @@ class _PersonalScreenState extends State<PersonalScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10,),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 15),
-                        child: TextFormField(
+                        child: TextField(
                           controller: _dateofbirthController,
+                          readOnly: true,
+
+                           // Make the text field read-only
                           decoration: InputDecoration(
                             labelText: "Date Of Birth",
                             border: OutlineInputBorder(),
                             errorText: _dateofbirthError,
                             suffixIcon: IconButton(
-                              onPressed: () async {
-                                final DateTime? pickedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime.now(),
-                                );
-                                if (pickedDate != null) {
-                                  setState(() {
-                                    // Format the picked date
-                                    String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                    _dateofbirthController.text = formattedDate;
-                                  });
-                                }
-                              },
                               icon: Icon(Icons.calendar_today),
+                              onPressed: () => _selectDate(context),
                             ),
                           ),
-                          readOnly: true,
                         ),
                       ),
-                      SizedBox(height: 10,),
+
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                         child: DropdownButtonFormField<String>(
@@ -120,11 +130,15 @@ class _PersonalScreenState extends State<PersonalScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 10,),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                         child: TextField(
                           controller: _bioController,
+                          onChanged: (value) {
+                            setState(() {
+                              _bioError = ''; // Clear the error message when the user starts typing
+                            });
+                          },
                           decoration: InputDecoration(
                             labelText: "Bio",
                             border: OutlineInputBorder(),
@@ -144,39 +158,69 @@ class _PersonalScreenState extends State<PersonalScreen> {
                 padding: EdgeInsets.all(16),
                 child: IconButton(
                   onPressed: () async {
-                    if (_nameController.text.isNotEmpty &&
-                        _dateofbirthController.text.isNotEmpty &&
-                        _selectedGender != null &&
-                        _bioController.text.isNotEmpty) {
-                      try {
-                        // Save data to Firestore
-                        await _firestore.collection('drivers').doc(FirebaseAuth.instance.currentUser!.uid).set({
-                          'name': _nameController.text,
-                          'dateOfBirth': _dateofbirthController.text, // Save date as string
-                          'gender': _selectedGender!,
-                          'bio': _bioController.text,
-                        });
-
-                        // Navigate to the next screen if data is saved successfully
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ExperienceScreen()),
-                        );
-                      } catch (e) {
-                        print('Error saving data: $e');
-                        // Handle error
-                      }
+                    if (_nameController.text.isEmpty) {
+                      setState(() {
+                        _nameError = 'Please enter your name';
+                      });
                     } else {
                       setState(() {
-                        // Set error messages for unfilled fields
-                        _nameError = _nameController.text.isEmpty ? 'Please enter your Name' : '';
-                        _dateofbirthError = _dateofbirthController.text.isEmpty ? 'Please enter your Date of birth' : '';
-                        _bioError = _bioController.text.isEmpty ? 'Please enter your Bio' : '';
+                        _nameError = '';
                       });
                     }
+
+                    if (_dateofbirthController.text.isEmpty) {
+                      setState(() {
+                        _dateofbirthError = 'Please select your date of birth';
+                      });
+                    } else {
+                      setState(() {
+                        _dateofbirthError = '';
+                      });
+                    }
+
+                    if (_bioController.text.isEmpty) {
+                      setState(() {
+                        _bioError = 'Please enter your bio';
+                      });
+                    } else {
+                      setState(() {
+                        _bioError = '';
+                      });
+                    }
+
+                    if (_selectedGender == null) {
+                      // Display an error message if the gender is not selected
+                      setState(() {
+                        _genderError = 'Please select your gender';
+                      });
+                    } else {
+                      setState(() {
+                        _genderError = '';
+                      });
+                    }
+
+                    if (_nameError.isEmpty &&
+                        _dateofbirthError.isEmpty &&
+                        _bioError.isEmpty &&
+                        _genderError.isEmpty) {
+                      // Navigate to the next screen if all fields are entered
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExperienceScreen(
+                            name: _nameController.text,
+                            dateOfBirth: _dateofbirthController.text,
+                            gender: _selectedGender,
+                            bio: _bioController.text,
+                            phoneNumber: widget.phoneNumber,
+                          ),
+                        ),
+                      );
+                    }
                   },
-                  icon: Icon(Icons.arrow_circle_right_outlined, size:94,color: Colors.red[400],),
+                  icon: Icon(Icons.arrow_circle_right_outlined, size: 94, color: Colors.red[400]),
                 ),
+
               ),
             ],
           ),

@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-import 'package:transmaacode/drivers/personalinformation.dart';
-
+import 'package:transmaacode/driver%20screen/loads/Available_loads.dart';
 import 'driver_login.dart';
 
-class OTP extends StatefulWidget {
-  final String enteredName;
 
-  const OTP({Key? key, required this.enteredName}) : super(key: key);
+class OTP extends StatefulWidget {
+  final String phoneNumber;
+
+  const OTP({Key? key, required this.phoneNumber,}) : super(key: key);
 
   @override
   State<OTP> createState() => _OTPState();
@@ -20,6 +20,19 @@ class _OTPState extends State<OTP> {
 
   @override
   Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 60,
+      textStyle: const TextStyle(
+        fontSize: 22,
+        color: Colors.black,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.red[100],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.transparent),
+      ),
+    );
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(250),
@@ -28,11 +41,7 @@ class _OTPState extends State<OTP> {
           flexibleSpace: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'asset/1.png',
-                width: 200,
-                height: 100,
-              ),
+              Image.asset('asset/Finallogo.png', width: 200, height: 100,),
               Text(
                 'Welcome',
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -69,7 +78,7 @@ class _OTPState extends State<OTP> {
               textAlign: TextAlign.center,
             ),
             Text(
-              ' ${widget.enteredName}',
+              ' ${widget.phoneNumber}',
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
@@ -79,6 +88,7 @@ class _OTPState extends State<OTP> {
             Pinput(
               length: 6,
               showCursor: true,
+              defaultPinTheme: defaultPinTheme,
               controller: _otpController,
               onChanged: (value) {
                 // Check if entered OTP is correct
@@ -99,11 +109,9 @@ class _OTPState extends State<OTP> {
               style: ElevatedButton.styleFrom(
                 primary: Colors.orange, // Change the button color here
               ),
-              child: Text('Verify',style: TextStyle(
-                  color: Colors.white,fontSize: 20
-              )),
+              child: Text('Verify',
+                  style: TextStyle(color: Colors.white, fontSize: 20)),
             ),
-
             SizedBox(
               height: 18,
             ),
@@ -130,7 +138,7 @@ class _OTPState extends State<OTP> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) =>PersonalScreen(),
+          builder: (_) => LoadsScreen(),
         ),
       );
     } catch (e) {
@@ -140,7 +148,8 @@ class _OTPState extends State<OTP> {
         if (e is FirebaseAuthException) {
           const errorMessages = {
             'invalid-verification-code': 'Incorrect OTP. Please try again.',
-            'invalid-verification-id': 'Invalid verification ID. Please restart the process.',
+            'invalid-verification-id':
+            'Invalid verification ID. Please restart the process.',
           };
           errorMessage = errorMessages[e.code] ??
               'An unexpected error occurred. Please try again.';
