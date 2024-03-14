@@ -1,13 +1,147 @@
 {
   "project_info": {
-    "project_number": "211937448030",
-    "project_id": "transmaa-driver",
-    "storage_bucket": "transmaa-driver.appspot.com"
+    "project_number": "34509632847",
+    "firebase_url": "https://transmaa-customer-default-rtdb.firebaseio.com",
+    "project_id": "transmaa-customer",
+    "storage_bucket": "transmaa-customer.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:211937448030:android:3e7602415190829caaa4cf",
+        "mobilesdk_app_id": "1:34509632847:android:46668aab0c09568688813a",
+        "android_client_info": {
+          "package_name": "com.example.customer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCigDAYUtYTDEZc6DeaNmV-Uf5obWBoaNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34509632847:android:aa8a161f976f17c988813a",
+        "android_client_info": {
+          "package_name": "com.example.drivers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCigDAYUtYTDEZc6DeaNmV-Uf5obWBoaNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34509632847:android:e8a2879ed0ef82ac88813a",
+        "android_client_info": {
+          "package_name": "com.example.logistics"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCigDAYUtYTDEZc6DeaNmV-Uf5obWBoaNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34509632847:android:7b61ad28698c619288813a",
+        "android_client_info": {
+          "package_name": "com.example.transmaa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCigDAYUtYTDEZc6DeaNmV-Uf5obWBoaNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34509632847:android:fa86e1139a1ee5f788813a",
+        "android_client_info": {
+          "package_name": "com.example.transmaa_dash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCigDAYUtYTDEZc6DeaNmV-Uf5obWBoaNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34509632847:android:e4284cfa635277a088813a",
+        "android_client_info": {
+          "package_name": "com.example.transmaa_drivers1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCigDAYUtYTDEZc6DeaNmV-Uf5obWBoaNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34509632847:android:edf5fc369305f3c088813a",
+        "android_client_info": {
+          "package_name": "com.example.transmaa_logistics"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCigDAYUtYTDEZc6DeaNmV-Uf5obWBoaNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34509632847:android:af8845abc6fc73b688813a",
         "android_client_info": {
           "package_name": "com.example.transmaacode"
         }
@@ -15,7 +149,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC0ppiULMPyCH2cvl2g7TXzc9jngjt92VA"
+          "current_key": "AIzaSyCigDAYUtYTDEZc6DeaNmV-Uf5obWBoaNY"
         }
       ],
       "services": {

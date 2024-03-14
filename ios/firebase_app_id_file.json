@@ -1,7 +1,7 @@
 {
   "file_generated_by": "FlutterFire CLI",
   "purpose": "FirebaseAppID & ProjectID for this Firebase app in this directory",
-  "GOOGLE_APP_ID": "1:211937448030:ios:d429f8c446affd36aaa4cf",
-  "FIREBASE_PROJECT_ID": "transmaa-driver",
-  "GCM_SENDER_ID": "211937448030"
+  "GOOGLE_APP_ID": "1:34509632847:ios:09d011cf6367ffba88813a",
+  "FIREBASE_PROJECT_ID": "transmaa-customer",
+  "GCM_SENDER_ID": "34509632847"
 }
