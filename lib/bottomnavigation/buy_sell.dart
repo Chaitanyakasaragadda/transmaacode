@@ -17,15 +17,14 @@ class _BuyAndSellState extends State<BuyAndSell> {
   final TextEditingController vehicleNoController = TextEditingController();
   final TextEditingController vehicleModelController = TextEditingController();
   final TextEditingController rcNoController = TextEditingController();
-  final TextEditingController yearsOfVehicleController =
-  TextEditingController();
+  final TextEditingController yearsOfVehicleController = TextEditingController();
 
-  bool showTextFields = false; // Changed initial state to false
-  Color sellButtonColor = Colors.orangeAccent;
-  Color byeButtonColor = Colors.orangeAccent;
+  bool showTextFields = true; // Changed initial state to true for showing text fields
+  Color sellButtonColor = Colors.green.shade900; // Set sell button color
+  Color byeButtonColor = Colors.orangeAccent; // Set buy button color
   bool isDataComplete = false;
 
-  double textFieldFontSize = 14;
+  double textFieldFontSize = 12;
 
   List<Uint8List?> _images = List.filled(4, null);
   Color saveButtonColor = Colors.red;

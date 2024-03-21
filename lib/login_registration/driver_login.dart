@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:transmaacode/login_registration/register.dart';
-
 import '../loads/Available_loads.dart';
 import 'otp_screen.dart';
 

@@ -12,10 +12,10 @@ class SuggestionsContainer extends StatefulWidget {
   final String selectedTime;
   final String selectedGoodsType;
   final String selectedTruck;
-  final String driverName;
+  final String driverName; // Add driver's name as a parameter
   final String driverPhoneNumber;
   final void Function() onClose;
-  final BuildContext parentContext;
+  final BuildContext parentContext; // Add parent context
 
   const SuggestionsContainer({
     Key? key,
@@ -48,8 +48,8 @@ class _SuggestionsContainerState extends State<SuggestionsContainer> {
           .doc(suggestionId)
           .get();
 
-      final customerName = customerSnapshot['customerName'];
-      final customerPhoneNumber = customerSnapshot['customerPhoneNumber'];
+      final CustomerName = customerSnapshot['CustomerName'];
+      final CustomerphoneNumber = customerSnapshot['CustomerphoneNumber'];
 
       await FirebaseFirestore.instance.collection('DriversAcceptedOrders').add({
         'fromLocation': suggestionData['fromLocation'],
@@ -60,12 +60,11 @@ class _SuggestionsContainerState extends State<SuggestionsContainer> {
         'selectedTruck': suggestionData['selectedTruck'],
         'driverName': widget.driverName,
         'driverPhoneNumber': widget.driverPhoneNumber,
-        'customerName': customerName,
-        'customerPhoneNumber': customerPhoneNumber,
+        'customerName': CustomerName,
+        'customerPhoneNumber': CustomerphoneNumber,
         'status': 'Accepted',
       });
 
-      // Remove the document from Transmaa_accepted_orders
       await FirebaseFirestore.instance
           .collection('Transmaa_accepted_orders')
           .doc(suggestionId)
@@ -241,8 +240,7 @@ class _SuggestionsContainerState extends State<SuggestionsContainer> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        fixedSize: Size(120, 30),
-                        primary: Colors.blueGrey,
+                        fixedSize: Size(120, 30), backgroundColor: Colors.blueGrey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -280,6 +278,13 @@ class _SuggestionsContainerState extends State<SuggestionsContainer> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+             Container(
+               alignment: Alignment.center,
+               child:  Text(
+                 "No Available Loads In This Location",
+                 style: TextStyle(fontSize: 20, color: Colors.black),
+               ),
+             ),
               Text(
                 "Suggested Loads : ",
                 style: TextStyle(fontSize: 20, color: Colors.black),
@@ -316,8 +321,8 @@ String selectedGoodsType = 'Furniture';
 String selectedTruck = 'Truck A';
 
 class MyWidget extends StatelessWidget {
-  final String currentUser;
-  final User? driver;
+  final String currentUser; // Define currentUser as a parameter
+  final User? driver; // Define driver as a parameter
 
   MyWidget({
     required this.currentUser,
@@ -338,7 +343,7 @@ class MyWidget extends StatelessWidget {
         driverName: currentUser,
         driverPhoneNumber: driver?.phoneNumber ?? '',
         onClose: () {},
-        parentContext: context,
+        parentContext: context, // Pass the parent context
       ),
     );
   }
